@@ -1,1 +1,76 @@
-/* You can add global styles to this file, and also import other style files */
+@import "primeng/resources/themes/soho-dark/theme.css";
+@import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
+
+* {
+  margin: 0;
+}
+
+#app-container {
+  padding: 30px;
+}
+
+#logo-title {
+  letter-spacing: 6px;
+  font-style: italic;
+  font-size: 36px;
+  color: #b09cf7;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-center {
+  justify-content: center;
+}
+
+.flex-start {
+  justify-content: flex-start;
+}
+
+.flex-end {
+  justify-content: flex-end;
+}
+
+.align-baseline {
+  align-items: baseline;
+}
+
+.align-start {
+  align-items: flex-start;
+}
+
+.align-end {
+  align-items: flex-end;
+}
+
+.align-center {
+  align-items: center;
+}
+
+#content-container {
+  margin: 50px auto;
+}
+
+.menu-item {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  font-style: italic;
+}

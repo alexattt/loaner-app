@@ -1,0 +1,223 @@
+<div id="content-container">
+  <p-card
+    [style]="{
+      width: '100%',
+      height: '200px',
+      marginBottom: '16px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }"
+  >
+    <div class="flex-row flex-end align-end" [style]="{ gap: '46px' }">
+      <div class="flex-column flex-center align-center">
+        <h2 [style]="{ marginBottom: '8px' }">Account Balance</h2>
+        <div class="flex-row flex-center align-baseline">
+          <p [style]="{ fontSize: '32px', fontWeight: 'bold' }">
+            {{ currentActiveUser?.availableMoney?.toFixed(2) }}
+          </p>
+          <p>EUR</p>
+        </div>
+      </div>
+      <p-divider layout="vertical"></p-divider>
+      <div
+        class="flex-column flex-centers align-center"
+        [style]="{ gap: '12px' }"
+      >
+        <h3 [style]="{ color: '#DAD2F9' }">Current summary</h3>
+        <div class="flex-row">
+          <div class="flex-column flex-center align-center">
+            <h4 [style]="{ marginBottom: '8px' }">Loans I have received</h4>
+            <div class="flex-row flex-center align-baseline">
+              <p [style]="{ fontSize: '32px', fontWeight: 'bold' }">
+                {{ currentActiveUser?.currentLoanAmount?.toFixed(2) }}
+              </p>
+              <p>EUR</p>
+            </div>
+          </div>
+          <p-divider layout="vertical"></p-divider>
+          <div class="flex-column flex-center align-center">
+            <h4 [style]="{ marginBottom: '8px' }">Loans I have sent</h4>
+            <div class="flex-row flex-center align-baseline">
+              <p [style]="{ fontSize: '32px', fontWeight: 'bold' }">
+                {{ currentActiveUser?.currentLendAmount?.toFixed(2) }}
+              </p>
+              <p>EUR</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </p-card>
+  <div class="flex-row flex-center align-start">
+    <p-card
+      header="Send a loan"
+      [style]="{
+          width: '360px',
+          height: '350px',
+        }"
+    >
+      <form
+        [formGroup]="formGroup"
+        class="flex-column"
+        [style]="{ gap: '16px' }"
+      >
+        <div class="flex-row flex-start">
+          <label for="sentToValue">Send to:</label>
+          <p-dropdown
+            id="sentToValue"
+            formControlName="sentTo"
+            [options]="allUsers"
+            optionLabel="username"
+          ></p-dropdown>
+        </div>
+        <div class="flex-row flex-start">
+          <label for="amountToSendValue">Amount to send:</label>
+          <p-inputNumber
+            id="amountToSendValue"
+            formControlName="amountToSend"
+            [showButtons]="true"
+            inputId="stacked"
+            [step]="0.25"
+            [min]="0.25"
+            mode="currency"
+            currency="EUR"
+          ></p-inputNumber>
+        </div>
+        <p-toast></p-toast>
+        <p-confirmPopup></p-confirmPopup>
+        <p-button label="Send Loan" (onClick)="sendLoan($event)"></p-button>
+      </form>
+    </p-card>
+    <div>
+      <p-tabView [style]="{ width: '65vw' }">
+        <p-tabPanel>
+          <ng-template pTemplate="header">
+            <span>Loans to pay off</span>
+            <i
+              class="pi pi-arrow-down"
+              [style]="{ color: 'red', marginLeft: '8px' }"
+            ></i>
+          </ng-template>
+          <p-table
+            [value]="userLoansReceived"
+            [paginator]="true"
+            [rows]="5"
+            [rowsPerPageOptions]="[5, 10, 15]"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Received from</th>
+                <th pSortableColumn="amount">
+                  Amount <p-sortIcon field="amount"></p-sortIcon>
+                </th>
+                <th pSortableColumn="sentTimestamp">
+                  Date received <p-sortIcon field="sentTimestamp"></p-sortIcon>
+                </th>
+                <th pSortableColumn="paidOffTimestamp">
+                  Paid Off <p-sortIcon field="paidOffTimestamp"></p-sortIcon>
+                </th>
+                <th></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-loan>
+              <tr>
+                <td>{{ loan.username }}</td>
+                <td>
+                  <div>
+                    <strong>{{ loan.amount }}</strong
+                    ><span [style]="{ fontSize: '11px', marginLeft: '4px' }"
+                      >EUR</span
+                    >
+                  </div>
+                </td>
+                <td>
+                  {{
+                    datepipe.transform(loan.sentTimestamp, "dd/MM/YYYY HH:mm")
+                  }}
+                </td>
+                <td>
+                  {{
+                    datepipe.transform(
+                      loan.paidOffTimestamp,
+                      "dd/MM/YYYY HH:mm"
+                    )
+                  }}
+                </td>
+                <td>
+                  <p-toast></p-toast>
+                  <p-confirmPopup></p-confirmPopup>
+                  <p-button
+                    *ngIf="!!!loan.paidOffTimestamp"
+                    label="Pay back"
+                    severity="danger"
+                    (onClick)="payBackLoan($event, loan)"
+                  ></p-button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+        <p-tabPanel>
+          <ng-template pTemplate="header">
+            <span>Loans I sent</span>
+            <i
+              class="pi pi-arrow-up"
+              [style]="{ color: 'green', marginLeft: '8px' }"
+            ></i>
+          </ng-template>
+          <p-table
+            [value]="userLoansSent"
+            [paginator]="true"
+            [rows]="5"
+            [rowsPerPageOptions]="[5, 10, 15]"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Sent to</th>
+                <th pSortableColumn="amount">
+                  Amount <p-sortIcon field="amount"></p-sortIcon>
+                </th>
+                <th pSortableColumn="sentTimestamp">
+                  Date sent <p-sortIcon field="sentTimestamp"></p-sortIcon>
+                </th>
+                <th pSortableColumn="paidOffTimestamp">
+                  Date received back
+                  <p-sortIcon field="paidOffTimestamp"></p-sortIcon>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-loan>
+              <tr>
+                <td>{{ loan.username }}</td>
+                <td>
+                  <div>
+                    <strong>{{ loan.amount }}</strong
+                    ><span [style]="{ fontSize: '11px', marginLeft: '4px' }"
+                      >EUR</span
+                    >
+                  </div>
+                </td>
+                <td>
+                  {{
+                    datepipe.transform(loan.sentTimestamp, "dd/MM/YYYY HH:mm")
+                  }}
+                </td>
+                <td>
+                  {{
+                    datepipe.transform(
+                      loan.paidOffTimestamp,
+                      "dd/MM/YYYY HH:mm"
+                    )
+                  }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+</div>

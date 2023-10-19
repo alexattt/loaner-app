@@ -1,0 +1,29 @@
+<div id="content-container">
+  <div class="flex-row flex-center" [style]="{ gap: '36px' }">
+    <div class="flex-column align-center" [style]="{ gap: '24px' }">
+      <h3 [style]="{ color: '#b09cf7' }">TOP 3 loan receivers</h3>
+      <ol>
+        <li
+          [ngStyle]="{ marginBottom: '16px', fontSize: '24px' }"
+          *ngFor="let user of topLoanReceivers"
+        >
+          <strong>{{ user.username }}</strong> -
+          {{ user.currentLoanAmount.toFixed(2) }} EUR
+        </li>
+      </ol>
+    </div>
+    <p-divider layout="vertical"></p-divider>
+    <div class="flex-column align-center" [style]="{ gap: '24px' }">
+      <h3 [style]="{ color: '#b09cf7' }">TOP 3 loan senders</h3>
+      <ol>
+        <li
+          [ngStyle]="{ marginBottom: '16px', fontSize: '24px' }"
+          *ngFor="let user of topLoanSenders"
+        >
+          <strong>{{ user.username }}</strong> -
+          {{ user.currentLendAmount.toFixed(2) }} EUR
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
