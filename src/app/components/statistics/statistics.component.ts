@@ -21,8 +21,5 @@ export class StatisticsComponent implements OnInit {
 
   ngOnInit() {
     this.fetchTopUserData();
-
-    console.log(this.topLoanReceivers);
-    console.log(this.topLoanSenders);
   }
 }
